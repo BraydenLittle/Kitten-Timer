@@ -1,27 +1,105 @@
-{\rtf1\ansi\ansicpg1252\cocoartf2513
-\cocoatextscaling0\cocoaplatform0{\fonttbl\f0\fswiss\fcharset0 Helvetica;}
-{\colortbl;\red255\green255\blue255;}
-{\*\expandedcolortbl;;}
-\paperw11900\paperh16840\margl1440\margr1440\vieww10800\viewh8400\viewkind0
-\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Global Stopwatch</title>
+  <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-database-compat.js"></script>
+  <style>
+    body {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      background-color: black;
+      color: white;
+      font-family: Arial, sans-serif;
+      text-align: center;
+    }
+    #stopwatch {
+      font-size: 48px;
+      margin-top: 20px;
+    }
+    #resetButton {
+      font-size: 20px;
+      padding: 10px 20px;
+      margin-top: 20px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
 
-\f0\fs24 \cf0 <!DOCTYPE html>\
-<html lang="en">\
-<head>\
-  <meta charset="UTF-8">\
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">\
-  <title>Global Timer</title>\
-  <link rel="stylesheet" href="style.css">\
-</head>\
-<body>\
-  <div id="container">\
-    <h1>Synced Timer</h1>\
-    <div id="timer">00:00:00:00</div>\
-    <button id="resetButton">Reset Timer</button>\
-  </div>\
-  <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app.js"></script>\
-  <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-firestore.js"></script>\
-  <script src="script.js"></script>\
-</body>\
-</html>\
-}
+  <h1>Global Stopwatch</h1>
+  <div id="stopwatch">00:00:00:00</div>
+  <button id="resetButton">Reset</button>
+
+  <script>
+    // Firebase Configuration
+    const firebaseConfig = {
+      apiKey: "AIzaSyAE1LwWVJChqQcPdNH7wtmitGBmbwIiIRM",
+      authDomain: "kitten-timer-fb.firebaseapp.com",
+      databaseURL: "https://kitten-timer-fb-default-rtdb.asia-southeast1.firebasedatabase.app",
+      projectId: "kitten-timer-fb",
+      storageBucket: "kitten-timer-fb.appspot.com",
+      messagingSenderId: "888944177558",
+      appId: "1:888944177558:web:46c255646dbd3208d7edb7",
+      measurementId: "G-QRSKH98463"
+    };
+
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+    const database = firebase.database();
+
+    // DOM Elements
+    const stopwatchDisplay = document.getElementById("stopwatch");
+    const resetButton = document.getElementById("resetButton");
+
+    let timerInterval;
+
+    // Function to start the stopwatch display
+    function startStopwatch(startTime) {
+      clearInterval(timerInterval);
+      timerInterval = setInterval(() => {
+        const currentTime = new Date().getTime();
+        const elapsedTime = currentTime - startTime;
+
+        const days = Math.floor(elapsedTime / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((elapsedTime % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const minutes = Math.floor((elapsedTime % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((elapsedTime % (1000 * 60)) / 1000);
+
+        stopwatchDisplay.textContent = `${days.toString().padStart(2, "0")}:${hours.toString().padStart(2, "0")}:${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
+      }, 1000);
+    }
+
+    // Fetch initial stopwatch state from Firebase
+    database.ref("stopwatch/startTimestamp").once("value").then(snapshot => {
+      const startTimestamp = snapshot.val();
+      if (startTimestamp) {
+        startStopwatch(new Date(startTimestamp).getTime());
+      }
+    });
+
+    // Real-time listener for changes to the startTimestamp
+    database.ref("stopwatch/startTimestamp").on("value", snapshot => {
+      const startTimestamp = snapshot.val();
+      if (startTimestamp) {
+        startStopwatch(new Date(startTimestamp).getTime());
+      }
+    });
+
+    // Reset button functionality
+    resetButton.addEventListener("click", () => {
+      const newStartTimestamp = new Date().toISOString();
+      database.ref("stopwatch").set({
+        startTimestamp: newStartTimestamp
+      });
+      startStopwatch(new Date(newStartTimestamp).getTime());
+    });
+  </script>
+
+</body>
+</html>
