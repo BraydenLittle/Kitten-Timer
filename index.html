@@ -59,8 +59,8 @@
 
     let timerInterval;
 
-    // Function to start the stopwatch display
-    function startStopwatch(startTime) {
+    // Function to update the stopwatch display
+    function updateStopwatchDisplay(startTime) {
       clearInterval(timerInterval);
       timerInterval = setInterval(() => {
         const currentTime = new Date().getTime();
@@ -75,19 +75,12 @@
       }, 1000);
     }
 
-    // Fetch initial stopwatch state from Firebase
-    database.ref("stopwatch/startTimestamp").once("value").then(snapshot => {
+    // Listen for real-time updates to the startTimestamp in Firebase
+    database.ref("stopwatch/startTimestamp").on("value", (snapshot) => {
       const startTimestamp = snapshot.val();
       if (startTimestamp) {
-        startStopwatch(new Date(startTimestamp).getTime());
-      }
-    });
-
-    // Real-time listener for changes to the startTimestamp
-    database.ref("stopwatch/startTimestamp").on("value", snapshot => {
-      const startTimestamp = snapshot.val();
-      if (startTimestamp) {
-        startStopwatch(new Date(startTimestamp).getTime());
+        const startTime = new Date(startTimestamp).getTime();
+        updateStopwatchDisplay(startTime);
       }
     });
 
@@ -97,7 +90,6 @@
       database.ref("stopwatch").set({
         startTimestamp: newStartTimestamp
       });
-      startStopwatch(new Date(newStartTimestamp).getTime());
     });
   </script>
 
