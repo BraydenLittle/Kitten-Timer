@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.5">
-  <title>Kitten Timer</title>
+  <title>Kitten Stopwatch</title>
   <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-database-compat.js"></script>
   <style>
@@ -21,7 +21,7 @@
       text-align: center;
     }
     #stopwatch {
-      font-size: 120px; /* Large font size for fullscreen effect */
+      font-size: 96px; 
       line-height: 1.5;
       margin-top: 20px;
     }
@@ -39,14 +39,14 @@
 </head>
 <body>
 
-  <h1>Time Since Last Kitten Received</h1>
+  <h1>Time Since Last Kitten</h1>
   <div id="stopwatch">
-    0 Seconds<br>
-    0 Minutes<br>
+    0 Days<br>
     0 Hours<br>
-    0 Days
+    0 Minutes<br>
+    0 Seconds
   </div>
-  <button id="resetButton">Reset</button>
+  <button id="resetButton">&#128049</button>
 
   <script>
     // Firebase Configuration
@@ -84,10 +84,10 @@
         const seconds = Math.floor((elapsedTime % (1000 * 60)) / 1000);
 
         stopwatchDisplay.innerHTML = `
-          ${seconds} Seconds<br>
-          ${minutes} Minutes<br>
+          ${days} Days<br>
           ${hours} Hours<br>
-          ${days} Days
+          ${minutes} Minutes<br>
+          ${seconds} Seconds
         `;
       }, 1000);
     }
