@@ -7,6 +7,8 @@
   <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-database-compat.js"></script>
   <style>
+    @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
+    
     body {
       display: flex;
       flex-direction: column;
@@ -15,11 +17,12 @@
       height: 100vh;
       background-color: black;
       color: white;
-      font-family: Arial, sans-serif;
+      font-family: 'Roboto', sans-serif;
       text-align: center;
     }
     #stopwatch {
-      font-size: 58px;
+      font-size: 120px; /* Large font size for fullscreen effect */
+      line-height: 1.5;
       margin-top: 20px;
     }
     #resetButton {
@@ -27,13 +30,22 @@
       padding: 10px 20px;
       margin-top: 20px;
       cursor: pointer;
+      background-color: white;
+      color: black;
+      border: none;
+      border-radius: 5px;
     }
   </style>
 </head>
 <body>
 
-  <h1>Time Since Last Kitten Recieved</h1>
-  <div id="stopwatch">00:00:00:00</div>
+  <h1>Time Since Last Kitten Received</h1>
+  <div id="stopwatch">
+    0 Seconds<br>
+    0 Minutes<br>
+    0 Hours<br>
+    0 Days
+  </div>
   <button id="resetButton">Reset</button>
 
   <script>
@@ -71,7 +83,12 @@
         const minutes = Math.floor((elapsedTime % (1000 * 60 * 60)) / (1000 * 60));
         const seconds = Math.floor((elapsedTime % (1000 * 60)) / 1000);
 
-        stopwatchDisplay.textContent = `${days.toString().padStart(2, "0")}:${hours.toString().padStart(2, "0")}:${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
+        stopwatchDisplay.innerHTML = `
+          ${seconds} Seconds<br>
+          ${minutes} Minutes<br>
+          ${hours} Hours<br>
+          ${days} Days
+        `;
       }, 1000);
     }
 
