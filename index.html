@@ -3,12 +3,12 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.5">
-  <title>Kitten Stopwatch</title>
+  <title>Kitten Timer</title>
   <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-database-compat.js"></script>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
-    
+
     body {
       display: flex;
       flex-direction: column;
@@ -19,9 +19,10 @@
       color: white;
       font-family: 'Roboto', sans-serif;
       text-align: center;
+      overflow: hidden;
     }
     #stopwatch {
-      font-size: 96px; 
+      font-size: 96px;
       line-height: 1.5;
       margin-top: 20px;
     }
@@ -35,18 +36,25 @@
       border: none;
       border-radius: 5px;
     }
+    .emoji {
+      position: absolute;
+      font-size: 40px;
+      animation: fall 2s linear;
+    }
+    @keyframes fall {
+      0% { transform: translateY(-100%); opacity: 1; }
+      100% { transform: translateY(100vh); opacity: 0; }
+    }
   </style>
+  <!-- Tab Icon -->
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 32 32%22><text y=%2225%22 font-size=%2232%22>😺</text></svg>">
 </head>
 <body>
 
-  <h1>Time Since Last Kitten</h1>
-  <div id="stopwatch">
-    0 Days<br>
-    0 Hours<br>
-    0 Minutes<br>
-    0 Seconds
-  </div>
-  <button id="resetButton">&#128049</button>
+  <h1>Time Since Last Kitten Received</h1>
+  <div id="stopwatch">0D 0H 0M 0S</div>
+  <button id="resetButton">Reset</button>
+  <audio id="meowSound" src="your-custom-sound.mp3"></audio>
 
   <script>
     // Firebase Configuration
@@ -68,6 +76,7 @@
     // DOM Elements
     const stopwatchDisplay = document.getElementById("stopwatch");
     const resetButton = document.getElementById("resetButton");
+    const meowSound = document.getElementById("meowSound");
 
     let timerInterval;
 
@@ -83,12 +92,7 @@
         const minutes = Math.floor((elapsedTime % (1000 * 60 * 60)) / (1000 * 60));
         const seconds = Math.floor((elapsedTime % (1000 * 60)) / 1000);
 
-        stopwatchDisplay.innerHTML = `
-          ${days} Days<br>
-          ${hours} Hours<br>
-          ${minutes} Minutes<br>
-          ${seconds} Seconds
-        `;
+        stopwatchDisplay.textContent = `${days}D ${hours}H ${minutes}M ${seconds}S`;
       }, 1000);
     }
 
@@ -101,12 +105,29 @@
       }
     });
 
-    // Reset button functionality
+    // Function to handle reset button click
     resetButton.addEventListener("click", () => {
-      const newStartTimestamp = new Date().toISOString();
-      database.ref("stopwatch").set({
-        startTimestamp: newStartTimestamp
-      });
+      const password = prompt("Enter password to reset:");
+      if (password === "intake") {
+        // Reset timer in Firebase
+        const newStartTimestamp = new Date().toISOString();
+        database.ref("stopwatch").set({
+          startTimestamp: newStartTimestamp
+        });
+
+        // Play sound
+        meowSound.play();
+
+        // Emoji rain effect
+        for (let i = 0; i < 100; i++) {
+          const emoji = document.createElement("div");
+          emoji.textContent = "😺";
+          emoji.className = "emoji";
+          emoji.style.left = `${Math.random() * 100}vw`;
+          document.body.appendChild(emoji);
+          setTimeout(() => emoji.remove(), 2000);
+        }
+      }
     });
   </script>
 
