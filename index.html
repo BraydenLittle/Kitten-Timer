@@ -22,17 +22,17 @@
       overflow: hidden;
     }
     #stopwatch {
-      font-size: 115px; /* 20% larger */
+      font-size: 138px; /* Increased by another 20% */
       line-height: 1.5;
       margin-top: 20px;
     }
     #heading {
-      font-size: 58px; /* 20% larger */
+      font-size: 70px; /* Increased by another 20% */
       margin-top: 20px;
     }
     #resetButton {
-      font-size: 18px; /* 20% larger */
-      padding: 6px 12px;
+      font-size: 22px; /* Increased by another 20% */
+      padding: 7px 14px;
       margin-top: 20px;
       cursor: pointer;
       background-color: black;
@@ -42,7 +42,7 @@
     }
     .emoji {
       position: absolute;
-      font-size: 48px; /* 20% larger */
+      font-size: 58px; /* Increased by another 20% */
       pointer-events: none;
       will-change: transform, top;
     }
@@ -144,8 +144,9 @@
         emoji.className = "emoji";
 
         // Random initial position and animation parameters
-        const startX = Math.random() * window.innerWidth;
-        const fallDuration = Math.random() * 3 + 3; // 3-6 seconds
+        const startX = Math.random() * window.innerWidth; // Random X position
+        const fallDuration = Math.random() * 3 + 3; // Random fall duration between 3-6 seconds
+        const rotationSpeed = Math.random() * 360; // Random rotation speed
 
         emoji.style.left = `${startX}px`;
         emoji.style.top = `-50px`;
@@ -153,6 +154,7 @@
           fall ${fallDuration}s linear,
           bounce 0.5s ease-in-out ${fallDuration - 0.5}s
         `;
+        emoji.style.transform = `rotate(${rotationSpeed}deg)`;
 
         document.body.appendChild(emoji);
 
