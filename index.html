@@ -26,33 +26,45 @@
       line-height: 1.5;
       margin-top: 20px;
     }
+    #heading {
+      font-size: 48px; /* Increased by 20% from 40px */
+      margin-top: 20px;
+    }
     #resetButton {
-      font-size: 30px;
-      padding: 10px 20px;
+      font-size: 15px; /* Halved from 30px */
+      padding: 5px 10px; /* Adjusted padding */
       margin-top: 20px;
       cursor: pointer;
-      background-color: white;
-      color: black;
-      border: none;
+      background-color: black;
+      color: white;
+      border: 2px solid white;
       border-radius: 5px;
     }
     .emoji {
       position: absolute;
       font-size: 40px;
-      animation: fall 2s linear;
+      animation: fall 3s linear, bounce 1.5s ease-in-out, spin 3s linear;
     }
     @keyframes fall {
-      0% { transform: translateY(-100%); opacity: 1; }
-      100% { transform: translateY(100vh); opacity: 0; }
+      0% { transform: translateY(-100%); }
+      100% { transform: translateY(100vh); }
+    }
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-50px); }
+    }
+    @keyframes spin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
     }
   </style>
   <!-- Tab Icon -->
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 32 32%22><text y=%2225%22 font-size=%2232%22>😺</text></svg>">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 32 32%22><text y=%2222%22 font-size=%2220%22>🐈</text></svg>">
 </head>
 <body>
 
-  <h1>Time Since Last Kitten Received</h1>
   <div id="stopwatch">0D 0H 0M 0S</div>
+  <h1 id="heading">Since Last Kitten Received</h1>
   <button id="resetButton">Reset</button>
   <audio id="meowSound" src="your-custom-sound.mp3"></audio>
 
@@ -107,26 +119,27 @@
 
     // Function to handle reset button click
     resetButton.addEventListener("click", () => {
-      const password = prompt("Enter password to reset:");
-      if (password === "intake") {
-        // Reset timer in Firebase
-        const newStartTimestamp = new Date().toISOString();
-        database.ref("stopwatch").set({
-          startTimestamp: newStartTimestamp
-        });
+      // Reset timer in Firebase
+      const newStartTimestamp = new Date().toISOString();
+      database.ref("stopwatch").set({
+        startTimestamp: newStartTimestamp
+      });
 
-        // Play sound
-        meowSound.play();
+      // Play sound
+      meowSound.play();
 
-        // Emoji rain effect
-        for (let i = 0; i < 100; i++) {
-          const emoji = document.createElement("div");
-          emoji.textContent = "😺";
-          emoji.className = "emoji";
-          emoji.style.left = `${Math.random() * 100}vw`;
-          document.body.appendChild(emoji);
-          setTimeout(() => emoji.remove(), 2000);
-        }
+      // Emoji rain effect
+      for (let i = 0; i < 100; i++) {
+        const emoji = document.createElement("div");
+        emoji.textContent = "🐈";
+        emoji.className = "emoji";
+        emoji.style.left = `${Math.random() * 100}vw`;
+        emoji.style.animationDelay = `${Math.random() * 0.5}s`;
+        emoji.style.animation = `fall ${Math.random() * 1.5 + 2.5}s linear, 
+                                  bounce 1.5s ease-in-out, 
+                                  spin ${Math.random() * 2 + 1.5}s linear`;
+        document.body.appendChild(emoji);
+        setTimeout(() => emoji.remove(), 3500);
       }
     });
   </script>
