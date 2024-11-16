@@ -43,15 +43,12 @@
     .emoji {
       position: absolute;
       font-size: 40px;
-      animation: fall 3s linear, bounce 1.5s ease-in-out, spin 3s linear;
+      animation: fall 3s linear, spin 3s linear;
     }
     @keyframes fall {
       0% { transform: translateY(-100%); }
-      100% { transform: translateY(100vh); }
-    }
-    @keyframes bounce {
-      0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(-50px); }
+      80% { transform: translateY(calc(100vh - 50px)); }
+      100% { transform: translateY(100vh); opacity: 0; }
     }
     @keyframes spin {
       from { transform: rotate(0deg); }
@@ -63,8 +60,8 @@
 </head>
 <body>
 
-  <div id="stopwatch">0D 0H 0M 0S</div>
-  <h1 id="heading">Since Last Kitten Received</h1>
+  <div id="stopwatch"></div>
+  <h1 id="heading">Time Since Last Kitten Received</h1>
   <button id="resetButton">Reset</button>
   <audio id="meowSound" src="your-custom-sound.mp3"></audio>
 
@@ -104,7 +101,14 @@
         const minutes = Math.floor((elapsedTime % (1000 * 60 * 60)) / (1000 * 60));
         const seconds = Math.floor((elapsedTime % (1000 * 60)) / 1000);
 
-        stopwatchDisplay.textContent = `${days}D ${hours}H ${minutes}M ${seconds}S`;
+        // Only show non-zero parts, but keep centred
+        let display = '';
+        if (days > 0) display += `${days}D `;
+        if (days > 0 || hours > 0) display += `${hours}H `;
+        if (days > 0 || hours > 0 || minutes > 0) display += `${minutes}M `;
+        display += `${seconds}S`;
+
+        stopwatchDisplay.textContent = display;
       }, 1000);
     }
 
@@ -135,9 +139,9 @@
         emoji.className = "emoji";
         emoji.style.left = `${Math.random() * 100}vw`;
         emoji.style.animationDelay = `${Math.random() * 0.5}s`;
-        emoji.style.animation = `fall ${Math.random() * 1.5 + 2.5}s linear, 
-                                  bounce 1.5s ease-in-out, 
-                                  spin ${Math.random() * 2 + 1.5}s linear`;
+        emoji.style.animation = `
+          fall ${Math.random() * 1.5 + 2.5}s linear, 
+          spin ${Math.random() * 2 + 1.5}s linear`;
         document.body.appendChild(emoji);
         setTimeout(() => emoji.remove(), 3500);
       }
