@@ -22,17 +22,17 @@
       overflow: hidden;
     }
     #stopwatch {
-      font-size: 96px;
+      font-size: 115px; /* 20% larger */
       line-height: 1.5;
       margin-top: 20px;
     }
     #heading {
-      font-size: 48px;
+      font-size: 58px; /* 20% larger */
       margin-top: 20px;
     }
     #resetButton {
-      font-size: 15px;
-      padding: 5px 10px;
+      font-size: 18px; /* 20% larger */
+      padding: 6px 12px;
       margin-top: 20px;
       cursor: pointer;
       background-color: black;
@@ -42,8 +42,33 @@
     }
     .emoji {
       position: absolute;
-      font-size: 40px;
+      font-size: 48px; /* 20% larger */
       pointer-events: none;
+      will-change: transform, top;
+    }
+    @keyframes fall {
+      0% {
+        top: -10%;
+        transform: rotate(0deg);
+      }
+      50% {
+        transform: rotate(180deg);
+      }
+      100% {
+        top: 110%;
+        transform: rotate(360deg);
+      }
+    }
+    @keyframes bounce {
+      0%, 20% {
+        transform: translateY(0);
+      }
+      50% {
+        transform: translateY(-50px);
+      }
+      100% {
+        transform: translateY(0);
+      }
     }
   </style>
   <!-- Tab Icon -->
@@ -118,22 +143,21 @@
         emoji.textContent = "🐈";
         emoji.className = "emoji";
 
-        // Random position, rotation, and fall speed
+        // Random initial position and animation parameters
         const startX = Math.random() * window.innerWidth;
-        const rotation = (Math.random() - 0.5) * 360;
-        const fallDuration = Math.random() * 2 + 3; // 3-5 seconds
+        const fallDuration = Math.random() * 3 + 3; // 3-6 seconds
 
         emoji.style.left = `${startX}px`;
-        emoji.style.top = `-50px`; // Start slightly off-screen
-        emoji.style.animation = `fall ${fallDuration}s ease-out, spin ${fallDuration}s linear`;
-
-        // Custom bounce effect
-        emoji.style.animationTimingFunction = `ease-out`;
+        emoji.style.top = `-50px`;
+        emoji.style.animation = `
+          fall ${fallDuration}s linear,
+          bounce 0.5s ease-in-out ${fallDuration - 0.5}s
+        `;
 
         document.body.appendChild(emoji);
 
-        // Remove emoji after animation
-        setTimeout(() => emoji.remove(), fallDuration * 1000);
+        // Remove emoji after it leaves the screen
+        setTimeout(() => emoji.remove(), fallDuration * 1000 + 500);
       }
     }
 
