@@ -27,12 +27,12 @@
       margin-top: 20px;
     }
     #heading {
-      font-size: 48px; /* Increased by 20% from 40px */
+      font-size: 48px;
       margin-top: 20px;
     }
     #resetButton {
-      font-size: 15px; /* Halved from 30px */
-      padding: 5px 10px; /* Adjusted padding */
+      font-size: 15px;
+      padding: 5px 10px;
       margin-top: 20px;
       cursor: pointer;
       background-color: black;
@@ -43,25 +43,16 @@
     .emoji {
       position: absolute;
       font-size: 40px;
-      animation: fall 3s linear, spin 3s linear;
-    }
-    @keyframes fall {
-      0% { transform: translateY(-100%); }
-      80% { transform: translateY(calc(100vh - 50px)); }
-      100% { transform: translateY(100vh); opacity: 0; }
-    }
-    @keyframes spin {
-      from { transform: rotate(0deg); }
-      to { transform: rotate(360deg); }
+      pointer-events: none;
     }
   </style>
   <!-- Tab Icon -->
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 32 32%22><text y=%2222%22 font-size=%2220%22>🐈</text></svg>">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 32 32%22><text y=%2222%22 font-size=%2212%22>🐈</text></svg>">
 </head>
 <body>
 
-  <div id="stopwatch"></div>
-  <h1 id="heading">Time Since Last Kitten Received</h1>
+  <div id="stopwatch">0d 0h 0m 0s</div>
+  <h1 id="heading">…since last kitten</h1>
   <button id="resetButton">Reset</button>
   <audio id="meowSound" src="your-custom-sound.mp3"></audio>
 
@@ -101,12 +92,11 @@
         const minutes = Math.floor((elapsedTime % (1000 * 60 * 60)) / (1000 * 60));
         const seconds = Math.floor((elapsedTime % (1000 * 60)) / 1000);
 
-        // Only show non-zero parts, but keep centred
         let display = '';
-        if (days > 0) display += `${days}D `;
-        if (days > 0 || hours > 0) display += `${hours}H `;
-        if (days > 0 || hours > 0 || minutes > 0) display += `${minutes}M `;
-        display += `${seconds}S`;
+        if (days > 0) display += `${days}d `;
+        if (days > 0 || hours > 0) display += `${hours}h `;
+        if (days > 0 || hours > 0 || minutes > 0) display += `${minutes}m `;
+        display += `${seconds}s`;
 
         stopwatchDisplay.textContent = display;
       }, 1000);
@@ -121,7 +111,33 @@
       }
     });
 
-    // Function to handle reset button click
+    // Function to handle emoji rain effect
+    function createEmojiRain() {
+      for (let i = 0; i < 50; i++) {
+        const emoji = document.createElement("div");
+        emoji.textContent = "🐈";
+        emoji.className = "emoji";
+
+        // Random position, rotation, and fall speed
+        const startX = Math.random() * window.innerWidth;
+        const rotation = (Math.random() - 0.5) * 360;
+        const fallDuration = Math.random() * 2 + 3; // 3-5 seconds
+
+        emoji.style.left = `${startX}px`;
+        emoji.style.top = `-50px`; // Start slightly off-screen
+        emoji.style.animation = `fall ${fallDuration}s ease-out, spin ${fallDuration}s linear`;
+
+        // Custom bounce effect
+        emoji.style.animationTimingFunction = `ease-out`;
+
+        document.body.appendChild(emoji);
+
+        // Remove emoji after animation
+        setTimeout(() => emoji.remove(), fallDuration * 1000);
+      }
+    }
+
+    // Reset button functionality
     resetButton.addEventListener("click", () => {
       // Reset timer in Firebase
       const newStartTimestamp = new Date().toISOString();
@@ -132,19 +148,8 @@
       // Play sound
       meowSound.play();
 
-      // Emoji rain effect
-      for (let i = 0; i < 100; i++) {
-        const emoji = document.createElement("div");
-        emoji.textContent = "🐈";
-        emoji.className = "emoji";
-        emoji.style.left = `${Math.random() * 100}vw`;
-        emoji.style.animationDelay = `${Math.random() * 0.5}s`;
-        emoji.style.animation = `
-          fall ${Math.random() * 1.5 + 2.5}s linear, 
-          spin ${Math.random() * 2 + 1.5}s linear`;
-        document.body.appendChild(emoji);
-        setTimeout(() => emoji.remove(), 3500);
-      }
+      // Trigger emoji rain
+      createEmojiRain();
     });
   </script>
 
